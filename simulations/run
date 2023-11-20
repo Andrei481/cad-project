@@ -1,0 +1,4 @@
+#!/bin/sh
+cd `dirname $0`
+../src/ipscheduler -n .:../src $*
+# for shared lib, use: opp_run -l ../src/ipscheduler -n .:../src $*

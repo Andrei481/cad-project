@@ -1,0 +1,3 @@
+package ipscheduler;
+
+@license(LGPL);
