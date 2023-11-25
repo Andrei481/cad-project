@@ -13,6 +13,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
+// Scheduler.h
+
 #ifndef __SCHED_TST_SCHEDULER_H_
 #define __SCHED_TST_SCHEDULER_H_
 
@@ -20,22 +22,22 @@
 
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
 class Scheduler : public cSimpleModule
 {
 public:
     Scheduler();
     ~Scheduler();
+
 private:
     cMessage *selfMsg;
     int NrUsers;
-   // int userWeights[3];
 
-  protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
+protected:
+    virtual void initialize() override;
+    virtual void handleMessage(cMessage *msg) override;
+
+    int findHighestPriorityQueue();
 };
 
 #endif
+

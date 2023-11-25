@@ -17,8 +17,6 @@
 
 Define_Module(Scheduler);
 
-
-
 Scheduler::Scheduler()
 {
     selfMsg = nullptr;
@@ -29,25 +27,41 @@ Scheduler::~Scheduler()
     cancelAndDelete(selfMsg);
 }
 
-
 void Scheduler::initialize()
 {
     NrUsers = par("gateSize").intValue();
     selfMsg = new cMessage("selfMsg");
-       scheduleAt(simTime(), selfMsg);
+    scheduleAt(simTime(), selfMsg);
 }
 
 void Scheduler::handleMessage(cMessage *msg)
 {
-  //  int userWeights[NrUsers];
-    if (msg == selfMsg){
-        for(int i =0;i<NrUsers;i++){
-            cMessage *cmd = new cMessage("cmd");
-            //set parameter value, e.g., nr of blocks to be sent from the queue by user i
-            send(cmd,"txScheduling",i);
-        }
-        scheduleAt(simTime()+par("schedulingPeriod").doubleValue(), selfMsg);
+    if (msg == selfMsg) {
+        int highestPriorityQueue = findHighestPriorityQueue();
 
+        if (highestPriorityQueue != -1) {
+            cMessage *cmd = new cMessage("cmd");
+            send(cmd, "txScheduling", highestPriorityQueue);
+        }
+
+        scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
+    }
+}
+
+int Scheduler::findHighestPriorityQueue()
+{
+    int highestPriorityQueue = -1;
+
+    for (int i = 0; i < NrUsers; i++) {
+        cChannel *channel = gate("txScheduling", i)->getTransmissionChannel();
+        cQueue *queue = channel->getQueue();
+
+        if (!channel->isBusy() && queue->getLength() > 0) {
+            highestPriorityQueue = i;
+            break;
+        }
     }
 
+    return highestPriorityQueue;
 }
+

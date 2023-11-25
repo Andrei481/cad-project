@@ -18,6 +18,8 @@ import Source;
 import Sink;
 import Scheduler;
 import MyQ;
+package ipscheduler.simulations;
+
 
 network Network
 
@@ -39,13 +41,13 @@ sources[nrHP + nrMP + nrLP]: Source {
 //@display("p=40,120");
 }
 hpq: MyQ{
-    NrInputs = nrHP;
+    NrInputs = parent.nrHP;
 }
 mpq: MyQ{
-	NrInputs = nrMP;
+	NrInputs = parent.nrMP;
 }
 lpq: MyQ{
-	NrInputs = nrLP;
+	NrInputs = parent.nrLP;
 }
 	
  

@@ -1,0 +1,55 @@
+version 3
+run General-0-20231125-13:56:19-18108
+attr configname General
+attr datetime 20231125-13:56:19
+attr datetimef 20231125-135619
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network Network
+attr processid 18108
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network Network
+
+par Network.scheduler typename "\"ipscheduler.simulations.Scheduler\""
+par Network.scheduler schedulingPeriod 1ms
+attr unit ms
+par Network.scheduler gateSize 3
+par Network.sink typename "\"ipscheduler.simulations.Sink\""
+par Network.sink gateSize 3
+par Network.sources[0] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[0] sendIaTime 10ms
+attr unit ms
+par Network.sources[1] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[1] sendIaTime 10ms
+attr unit ms
+par Network.sources[2] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[2] sendIaTime 10ms
+attr unit ms
+par Network.sources[3] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[3] sendIaTime 10ms
+attr unit ms
+par Network.sources[4] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[4] sendIaTime 10ms
+attr unit ms
+par Network.sources[5] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[5] sendIaTime 10ms
+attr unit ms
+par Network.hpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.hpq NrInputs 1
+par Network.mpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.mpq NrInputs 2
+par Network.lpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.lpq NrInputs 3
+par Network typename "\"ipscheduler.simulations.Network\""
+par Network nrHP 1
+par Network nrMP 2
+par Network nrLP 3
+
