@@ -1,0 +1,65 @@
+version 3
+run Sched1-0-20231125-22:07:28-15876
+attr configname Sched1
+attr datetime 20231125-22:07:28
+attr datetimef 20231125-220728
+attr experiment Sched1
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network Network
+attr processid 15876
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config description "usual config"
+config *.nrHP 2
+config *.nrMP 3
+config *.nrLP 2
+config Network.sources[*].sendIaTime "0.2 ms"
+config network Network
+config sim-time-limit 100h
+config cpu-time-limit 300s
+
+par Network.scheduler typename "\"ipscheduler.simulations.Scheduler\""
+par Network.scheduler schedulingPeriod 1ms
+attr unit ms
+par Network.scheduler gateSize 3
+par Network.sink typename "\"ipscheduler.simulations.Sink\""
+par Network.sink gateSize 3
+par Network.sources[0] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[0] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[1] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[1] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[2] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[2] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[3] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[3] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[4] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[4] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[5] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[5] sendIaTime 0.2ms
+attr unit ms
+par Network.sources[6] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[6] sendIaTime 0.2ms
+attr unit ms
+par Network.hpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.hpq NrInputs 2
+par Network.mpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.mpq NrInputs 3
+par Network.lpq typename "\"ipscheduler.simulations.MyQ\""
+par Network.lpq NrInputs 2
+par Network typename "\"ipscheduler.simulations.Network\""
+par Network nrHP 2
+par Network nrMP 3
+par Network nrLP 2
+

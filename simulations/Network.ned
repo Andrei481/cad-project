@@ -13,11 +13,11 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-
-import Source;
-import Sink;
-import Scheduler;
-import MyQ;
+package ipscheduler.simulations;
+//import Source;
+//import Sink;
+//import Scheduler;
+//import MyQ;
 
 network Network
 
@@ -26,47 +26,51 @@ network Network
         int nrHP;
         int nrMP;
         int nrLP;
-   submodules:
-scheduler: Scheduler {
-    gateSize = 3;
-//@display("p=120,40");
-}
-sink: Sink {
-	gateSize = 3;
-//@display("p=120,200");
-}
-sources[nrHP + nrMP + nrLP]: Source {
-//@display("p=40,120");
-}
-hpq: MyQ{
-    NrInputs = nrHP;
-}
-mpq: MyQ{
-	NrInputs = nrMP;
-}
-lpq: MyQ{
-	NrInputs = nrLP;
-}
-	
- 
-connections: 
-for i = 0..nrHP - 1 {
-sources[i].txPackets --> hpq.rxPackets[i];
-}
-for i = 0..nrMP-1{
- sources[nrHP+i].txPackets --> mpq.rxPackets[i];   
-}
-for i = 0 ..nrLP-1 {
-sources[nrHP+nrMP+i].txPackets --> lpq.rxPackets[i];
-}
-scheduler.txScheduling[0] --> hpq.rxScheduling;
-scheduler.txScheduling[1] --> mpq.rxScheduling;
-scheduler.txScheduling[2] --> lpq.rxScheduling;
-hpq.txPackets --> sink.rxPackets[0];
-mpq.txPackets --> sink.rxPackets[1];
-lpq.txPackets --> sink.rxPackets[2];
+        @display("bgb=354,294");
+    submodules:
+        scheduler: Scheduler {
+            gateSize = 3;
+            @display("p=317,155");
+        }
+        sink: Sink {
+            gateSize = 3;
+            @display("p=268,41");
+        }
+        sources[nrHP + nrMP + nrLP]: Source {
+            @display("p=91,220");
+        }
+        hpq: MyQ {
+            NrInputs = parent.nrHP;
+            @display("p=91,56");
+        }
+        mpq: MyQ {
+            NrInputs = parent.nrMP;
+            @display("p=141,141");
+        }
+        lpq: MyQ {
+            NrInputs = parent.nrLP;
+            @display("is=s;p=213,203");
+        }
+
+
+    connections:
+        for i=0..nrHP - 1 {
+            sources[i].txPackets --> hpq.rxPackets[i];
+        }
+        for i=0..nrMP-1 {
+            sources[nrHP+i].txPackets --> mpq.rxPackets[i];
+        }
+        for i=0..nrLP-1 {
+            sources[nrHP+nrMP+i].txPackets --> lpq.rxPackets[i];
+        }
+        scheduler.txScheduling[0] --> hpq.rxScheduling;
+        scheduler.txScheduling[1] --> mpq.rxScheduling;
+        scheduler.txScheduling[2] --> lpq.rxScheduling;
+        hpq.txPackets --> sink.rxPackets[0];
+        mpq.txPackets --> sink.rxPackets[1];
+        lpq.txPackets --> sink.rxPackets[2];
 //scheduler.txScheduling[i] --> user[i].rxScheduling;
 //user[i].txPackets --> sink.rxPackets[i];
 
-}     
-        
+}
+
