@@ -15,6 +15,8 @@
 
 // Scheduler.h
 
+// Scheduler.h
+
 #ifndef __SCHED_TST_SCHEDULER_H_
 #define __SCHED_TST_SCHEDULER_H_
 
@@ -26,18 +28,20 @@ class Scheduler : public cSimpleModule
 {
 public:
     Scheduler();
-    ~Scheduler();
-
-private:
-    cMessage *selfMsg;
-    int NrUsers;
+    virtual ~Scheduler();
 
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 
-    int findHighestPriorityQueue();
+private:
+    cMessage *selfMsg;
+    int NrUsers;
+    int lastServedPriority;
+
+    int findNextNonEmptyQueue();
 };
 
 #endif
+
 

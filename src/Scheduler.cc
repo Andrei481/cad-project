@@ -17,27 +17,24 @@
 
 Define_Module(Scheduler);
 
-Scheduler::Scheduler()
-{
+Scheduler::Scheduler() {
     selfMsg = nullptr;
+    lastServedPriority = -1;
 }
 
-Scheduler::~Scheduler()
-{
+Scheduler::~Scheduler() {
     cancelAndDelete(selfMsg);
 }
 
-void Scheduler::initialize()
-{
+void Scheduler::initialize() {
     NrUsers = par("gateSize").intValue();
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
 }
 
-void Scheduler::handleMessage(cMessage *msg)
-{
+void Scheduler::handleMessage(cMessage *msg) {
     if (msg == selfMsg) {
-        int highestPriorityQueue = findHighestPriorityQueue();
+        int highestPriorityQueue = findNextNonEmptyQueue();
 
         if (highestPriorityQueue != -1) {
             cMessage *cmd = new cMessage("cmd");
@@ -48,20 +45,23 @@ void Scheduler::handleMessage(cMessage *msg)
     }
 }
 
-int Scheduler::findHighestPriorityQueue()
-{
-    int highestPriorityQueue = -1;
+int Scheduler::findNextNonEmptyQueue() {
+    int startingPriority = par("startingPriority").intValue();
+    int nextPriority = (lastServedPriority + 1) % NrUsers;
 
     for (int i = 0; i < NrUsers; i++) {
-        cChannel *channel = gate("txScheduling", i)->getTransmissionChannel();
-        cQueue *queue = channel->getQueue();
+        int queueIndex = (nextPriority + i) % NrUsers;
+        cMessage *msg = new cMessage("dummy");
+        send(msg, "rxScheduling", queueIndex);
 
-        if (!channel->isBusy() && queue->getLength() > 0) {
-            highestPriorityQueue = i;
-            break;
+        if (msg->arrivedOn("txPackets")) {
+            delete msg;
+            lastServedPriority = queueIndex;
+            return queueIndex;
         }
+
+        delete msg;
     }
 
-    return highestPriorityQueue;
+    return -1;
 }
-
