@@ -30,10 +30,8 @@ void MyQ::handleMessage(cMessage *msg)
     if (msg->arrivedOn("rxPackets")){
         queue.insert(msg);
     } else if (msg->arrivedOn("rxScheduling")){
-        //read parameters from msg
         delete msg;
-        //empty the queue !
-        while(!queue.isEmpty()){
+        if (!queue.isEmpty()){
           msg = (cMessage *)queue.pop();
           send(msg, "txPackets");
         }

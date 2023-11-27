@@ -41,21 +41,7 @@ void Source::handleMessage(cMessage *msg)
     send(job, "txPackets");
     double sendingTime;
     sendingTime = par("sendIaTime").doubleValue();
-    //scheduleAt(simTime()+ exponential(sendingTime));
     scheduleAt(simTime()+ exponential(sendingTime), sendMessageEvent);
 
     //scheduleAt(simTime()+par("sendIaTime").doubleValue(), sendMessageEvent);
 }
-
-
-/*
-void Source::initialize()
-{
-    // TODO - Generated method body
-}
-
-void Source::handleMessage(cMessage *msg)
-{
-    // TODO - Generated method body
-}
-*/

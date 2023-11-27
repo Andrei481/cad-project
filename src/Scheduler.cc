@@ -32,36 +32,49 @@ void Scheduler::initialize() {
     scheduleAt(simTime(), selfMsg);
 }
 
-void Scheduler::handleMessage(cMessage *msg) {
-    if (msg == selfMsg) {
-        int highestPriorityQueue = findNextNonEmptyQueue();
+//void Scheduler::handleMessage(cMessage *msg)
+//{
+//  //  int userWeights[NrUsers];
+//    if (msg == selfMsg){
+//        for(int i =0;i<NrUsers;i++){
+//            cMessage *cmd = new cMessage("cmd");
+//            //set parameter value, e.g., nr of blocks to be sent from the queue by user i
+//            send(cmd,"txScheduling",i);
+//        }
+//        scheduleAt(simTime()+par("schedulingPeriod").doubleValue(), selfMsg);
+//
+//    }
+//}
+ void Scheduler::handleMessage(cMessage *msg) {
+     if (msg == selfMsg) {
+         int highestPriorityQueue = findNextNonEmptyQueue();
 
-        if (highestPriorityQueue != -1) {
-            cMessage *cmd = new cMessage("cmd");
-            send(cmd, "txScheduling", highestPriorityQueue);
-        }
+         if (highestPriorityQueue != -1) {
+             cMessage *cmd = new cMessage("cmd");
+             send(cmd, "txScheduling", highestPriorityQueue);
+         }
 
-        scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
-    }
-}
+         scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
+     }
+ }
 
-int Scheduler::findNextNonEmptyQueue() {
-    int startingPriority = par("startingPriority").intValue();
-    int nextPriority = (lastServedPriority + 1) % NrUsers;
+ int Scheduler::findNextNonEmptyQueue() {
+     int startingPriority = 3; //par("startingPriority").intValue();
+     int nextPriority = (lastServedPriority + 1) % NrUsers;
 
-    for (int i = 0; i < NrUsers; i++) {
-        int queueIndex = (nextPriority + i) % NrUsers;
-        cMessage *msg = new cMessage("dummy");
-        send(msg, "rxScheduling", queueIndex);
+     for (int i = 0; i < NrUsers; i++) {
+         int queueIndex = (nextPriority + i) % NrUsers;
+         cMessage *msg = new cMessage("dummy");
+         send(msg, "txScheduling", queueIndex);
 
-        if (msg->arrivedOn("txPackets")) {
-            delete msg;
-            lastServedPriority = queueIndex;
-            return queueIndex;
-        }
+         if (msg->arrivedOn("txPackets")) {
+             delete msg;
+             lastServedPriority = queueIndex;
+             return queueIndex;
+         }
 
-        delete msg;
-    }
+         //delete msg;
+     }
 
-    return -1;
-}
+     return -1;
+ }
