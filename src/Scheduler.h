@@ -39,7 +39,7 @@ private:
     int NrUsers;
     int lastServedPriority;
 
-    int findNextNonEmptyQueue();
+    int findHighestPriorityNonEmptyQueue();
 };
 
 #endif

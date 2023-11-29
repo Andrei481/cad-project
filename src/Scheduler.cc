@@ -45,36 +45,53 @@ void Scheduler::initialize() {
 //
 //    }
 //}
- void Scheduler::handleMessage(cMessage *msg) {
-     if (msg == selfMsg) {
-         int highestPriorityQueue = findNextNonEmptyQueue();
+void Scheduler::handleMessage(cMessage *msg) {
+    if (msg == selfMsg) {
+        int highestPriorityQueue = findHighestPriorityNonEmptyQueue();
 
-         if (highestPriorityQueue != -1) {
-             cMessage *cmd = new cMessage("cmd");
-             send(cmd, "txScheduling", highestPriorityQueue);
-         }
+        if (highestPriorityQueue != -1) {
+            cMessage *cmd = new cMessage("cmd");
+            send(cmd, "txScheduling", highestPriorityQueue);
+        }
 
-         scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
-     }
- }
+        scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
+    }
+}
 
- int Scheduler::findNextNonEmptyQueue() {
-     int startingPriority = 3; //par("startingPriority").intValue();
-     int nextPriority = (lastServedPriority + 1) % NrUsers;
+int Scheduler::findHighestPriorityNonEmptyQueue() {
+    for (int i = 0; i < NrUsers; i++) {
+        int queueIndex = (lastServedPriority + i + 1) % NrUsers;
+        cMessage *msg = new cMessage("dummy");
+        send(msg, "txScheduling", queueIndex);
 
-     for (int i = 0; i < NrUsers; i++) {
-         int queueIndex = (nextPriority + i) % NrUsers;
-         cMessage *msg = new cMessage("dummy");
-         send(msg, "txScheduling", queueIndex);
+        if (msg->arrivedOn("txPackets")) {
+            delete msg;
+            lastServedPriority = queueIndex;
+            return queueIndex;
+        }
 
-         if (msg->arrivedOn("txPackets")) {
-             delete msg;
-             lastServedPriority = queueIndex;
-             return queueIndex;
-         }
+        // delete msg;
+    }
 
-         //delete msg;
-     }
+    return -1;
+}
+//  int Scheduler::findNextNonEmptyQueue() {
+//      int startingPriority = 3;
+//      int nextPriority = (lastServedPriority + 1) % NrUsers;
 
-     return -1;
- }
+//      for (int i = 0; i < NrUsers; i++) {
+//          int queueIndex = (nextPriority + i) % NrUsers;
+//          cMessage *msg = new cMessage("dummy");
+//          send(msg, "txScheduling", queueIndex);
+
+//          if (msg->arrivedOn("txPackets")) {
+//              delete msg;
+//              lastServedPriority = queueIndex;
+//              return queueIndex;
+//          }
+
+//          //delete msg;
+//      }
+
+//      return -1;
+//  }
