@@ -1,6 +1,6 @@
 // User.ned
-import MyQ;
-import Source;
+//import MyQ;
+//import Source;
 package ipscheduler.simulations;
 
 module User
@@ -20,6 +20,6 @@ module User
 
     connections:
         rxScheduling --> myqq.rxScheduling;
-        generator.txPackets --> myqq.rxPackets;
+        //generator.txPackets --> myqq.rxPackets;
         myqq.txPackets --> txPackets;
 }

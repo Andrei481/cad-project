@@ -47,7 +47,7 @@ void Scheduler::initialize() {
 //}
 void Scheduler::handleMessage(cMessage *msg) {
     if (msg == selfMsg) {
-        int highestPriorityQueue = findHighestPriorityNonEmptyQueue();
+        int highestPriorityQueue = findNextNonEmptyQueue();
 
         if (highestPriorityQueue != -1) {
             cMessage *cmd = new cMessage("cmd");
@@ -58,11 +58,14 @@ void Scheduler::handleMessage(cMessage *msg) {
     }
 }
 
-int Scheduler::findHighestPriorityNonEmptyQueue() {
+int Scheduler::findNextNonEmptyQueue() {
+    int startingPriority = par("startingPriority").intValue();
+    int nextPriority = (lastServedPriority + 1) % NrUsers;
+
     for (int i = 0; i < NrUsers; i++) {
-        int queueIndex = (lastServedPriority + i + 1) % NrUsers;
+        int queueIndex = (nextPriority + i) % NrUsers;
         cMessage *msg = new cMessage("dummy");
-        send(msg, "txScheduling", queueIndex);
+        send(msg, "rxScheduling", queueIndex);
 
         if (msg->arrivedOn("txPackets")) {
             delete msg;
@@ -70,28 +73,25 @@ int Scheduler::findHighestPriorityNonEmptyQueue() {
             return queueIndex;
         }
 
-        // delete msg;
+        //delete msg;
     }
 
     return -1;
 }
-//  int Scheduler::findNextNonEmptyQueue() {
-//      int startingPriority = 3;
-//      int nextPriority = (lastServedPriority + 1) % NrUsers;
-
-//      for (int i = 0; i < NrUsers; i++) {
-//          int queueIndex = (nextPriority + i) % NrUsers;
-//          cMessage *msg = new cMessage("dummy");
-//          send(msg, "txScheduling", queueIndex);
-
-//          if (msg->arrivedOn("txPackets")) {
-//              delete msg;
-//              lastServedPriority = queueIndex;
-//              return queueIndex;
-//          }
-
-//          //delete msg;
-//      }
-
-//      return -1;
-//  }
+//int Scheduler::findHighestPriorityNonEmptyQueue() {
+//    for (int i = 0; i < NrUsers; i++) {
+//        int queueIndex = (lastServedPriority + i + 1) % NrUsers;
+//        cMessage *msg = new cMessage("dummy");
+//        send(msg, "txScheduling", queueIndex);
+//
+//        if (msg->arrivedOn("txPackets")) {
+//            delete msg;
+//            lastServedPriority = queueIndex;
+//            return queueIndex;
+//        }
+//
+//        // delete msg;
+//    }
+//
+//    return -1;
+//}
