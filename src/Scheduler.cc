@@ -68,8 +68,8 @@ int Scheduler::findNextWeightedNonEmptyQueue() {
     int maxiIndex = 0;
 
     for (int i = 0; i < NrUsers; i++) {
-        long long auctionValue = lastTime[i] * userWeight[i];
-        if (actionValue > maximum)
+        int_64t auctionValue = userWeight[i];//lastTime[i] * userWeight[i];
+        if (auctionValue > maximum)
             maxiIndex = i;
     }
     cMessage *msg = new cMessage("dummy");
