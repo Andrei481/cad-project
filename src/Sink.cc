@@ -27,5 +27,34 @@ void Sink::handleMessage(cMessage *msg)
     simtime_t lifetime = simTime() - msg->getCreationTime();
       EV << "Received " << msg->getName() << ", lifetime: " << lifetime << "s" << endl;
     //  emit(lifetimeSignal, lifetime);
+      if( msg->arrivedOn("rxPackets", 0)){
+          highVector.record(lifetime);
+          highHistogram.collect(lifetime);
+      }
+
+      if( msg->arrivedOn("rxPackets", 1)){
+          mediumVector.record(lifetime);
+          mediumHistogram.collect(lifetime);
+      }
+
+      if( msg->arrivedOn("rxPackets", 2)){
+          lowVector.record(lifetime);
+          lowHistogram.collect(lifetime);
+      }
+      //packetsVector.record(lifetime);
+      //histogram.collect(lifetime);
       delete msg;
+}
+
+void Sink::finish()
+{
+        // Print or use the average as needed
+        EV << "Average of highVector: " << highHistogram.getMean() << endl;
+
+    // Print or use the average as needed
+        EV << "Average of mediumVector: " << mediumHistogram.getMean() << endl;
+
+
+    // Print or use the average as needed
+        EV << "Average of lowVector: " << lowHistogram.getMean() << endl;
 }
