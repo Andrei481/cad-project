@@ -38,8 +38,9 @@ private:
     cMessage *selfMsg;
     int NrUsers;
     int lastServedPriority;
-
-    int findHighestPriorityNonEmptyQueue();
+    long long weights[100];
+    long long lastTime[100];
+    int findNextWeightedNonEmptyQueue();
 };
 
 #endif

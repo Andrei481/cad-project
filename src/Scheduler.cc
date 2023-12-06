@@ -30,6 +30,10 @@ void Scheduler::initialize() {
     NrUsers = par("gateSize").intValue();
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
+    for (int i =0; i < NrUsers; i++)
+        userWeights[i] = i + 1;
+    for (int i =0; i < NrUsers; i++)
+            lastTime[i] = 1;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -47,10 +51,11 @@ void Scheduler::initialize() {
 //}
 void Scheduler::handleMessage(cMessage *msg) {
     if (msg == selfMsg) {
-        int highestPriorityQueue = findNextNonEmptyQueue();
+        int highestPriorityQueue = findNextWeightedNonEmptyQueue();
 
         if (highestPriorityQueue != -1) {
             cMessage *cmd = new cMessage("cmd");
+            lastTime[highestPriorityQueue] = simTime().raw();
             send(cmd, "txScheduling", highestPriorityQueue);
         }
 
@@ -58,24 +63,22 @@ void Scheduler::handleMessage(cMessage *msg) {
     }
 }
 
-int Scheduler::findNextNonEmptyQueue() {
-    int startingPriority = par("startingPriority").intValue();
-    int nextPriority = (lastServedPriority + 1) % NrUsers;
+int Scheduler::findNextWeightedNonEmptyQueue() {
+    int64_t maximum = 0;
+    int maxiIndex = 0;
 
     for (int i = 0; i < NrUsers; i++) {
-        int queueIndex = (nextPriority + i) % NrUsers;
-        cMessage *msg = new cMessage("dummy");
-        send(msg, "rxScheduling", queueIndex);
-
-        if (msg->arrivedOn("txPackets")) {
-            delete msg;
-            lastServedPriority = queueIndex;
-            return queueIndex;
-        }
-
-        //delete msg;
+        long long auctionValue = lastTime[i] * userWeight[i];
+        if (actionValue > maximum)
+            maxiIndex = i;
     }
+    cMessage *msg = new cMessage("dummy");
+       send(msg, "txScheduling", maxiIndex);
 
+       if (msg->arrivedOn("txPackets")) {
+           delete msg;
+           return maxiIndex;
+       }
     return -1;
 }
 //int Scheduler::findHighestPriorityNonEmptyQueue() {
