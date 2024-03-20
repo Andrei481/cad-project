@@ -23,9 +23,15 @@ simple Sink
 {
  parameters:
         int gateSize=default(3);
-        @display("i=block/sink");
-        @signal[lifetimeSignal](type="simtime_t");
-        @statistic[lifetime](title="lifetime of arrived jobs"; source="lifetimeSignal"; unit=s; record=vector,mean,max; interpolationmode=none);
+       // @display("i=block/sink");
+      //  @signal[lifetime](type="simtime_t");
+      //  @statistic[lifetime](title="lifetime of arrived jobs"; unit=s; record=vector,mean,max; interpolationmode=none);
+        @signal[lifetimeHq](type="double");
+        @signal[lifetimeMq](type="double");
+        @signal[lifetimeLq](type="double");
+        @statistic[statsHq](title="last time served"; source="lifetimeHq"; record=vector,stats; interpolationmode=none);
+        @statistic[statsMq](title="last time served"; source="lifetimeMq"; record=vector,stats; interpolationmode=none);
+        @statistic[statsLq](title="last time served"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
     gates:
         input rxPackets[gateSize];
 
