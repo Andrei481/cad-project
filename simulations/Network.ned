@@ -61,12 +61,18 @@ network Network
         for i=0..nrLP-1 {
             sources[nrHP+nrMP+i].txPackets --> lpq.rxPackets[i];
         }
-        scheduler.txScheduling[0] --> hpq.rxScheduling;
+        scheduler.txScheduling[2] --> hpq.rxScheduling;
         scheduler.txScheduling[1] --> mpq.rxScheduling;
-        scheduler.txScheduling[2] --> lpq.rxScheduling;
-        hpq.txPackets --> sink.rxPackets[0];
+        scheduler.txScheduling[0] --> lpq.rxScheduling;
+        hpq.txPackets --> sink.rxPackets[2];
         mpq.txPackets --> sink.rxPackets[1];
-        lpq.txPackets --> sink.rxPackets[2];
+        lpq.txPackets --> sink.rxPackets[0];
+        hpq.txInfo --> scheduler.rxInfo[2];
+        mpq.txInfo --> scheduler.rxInfo[1];
+        lpq.txInfo --> scheduler.rxInfo[0];
+        hpq.txPriority --> scheduler.rxPriority[2];
+        mpq.txPriority --> scheduler.rxPriority[1];
+        lpq.txPriority --> scheduler.rxPriority[0];
 
 }
 

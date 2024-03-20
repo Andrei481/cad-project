@@ -25,15 +25,28 @@ void MyQ::initialize()
 void MyQ::handleMessage(cMessage *msg)
 {
     //int i;
-    //int ql;
+    int ql;
     //ql = queue.getLength();
     if (msg->arrivedOn("rxPackets")){
         queue.insert(msg);
     } else if (msg->arrivedOn("rxScheduling")){
         delete msg;
+
         if (!queue.isEmpty()){
           msg = (cMessage *)queue.pop();
           send(msg, "txPackets");
         }
+
+        cMessage *lastTime = new cMessage("lastTime");
+        lastTime->addPar("last_time");
+        lastTime->par("last_time").setDoubleValue(simTime().dbl());
+        send(lastTime, "txPriority");
     }
+
+    ql = queue.getLength();
+
+    cMessage *qInfo = new cMessage("qInfo");
+    qInfo->addPar("length");
+    qInfo->par("length").setLongValue(ql);
+    sendDelayed(qInfo, 0.1, "txInfo");
 }

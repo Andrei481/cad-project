@@ -24,9 +24,11 @@ simple Scheduler
       parameters:
         //@display("i=block/dispatch");
         //volatile 
-        double schedulingPeriod @unit(ms) = default(0.2ms);
+        double schedulingPeriod @unit(ms) = default(0.1ms);
         int gateSize=default(3);//me, dt
 
     gates:
         output txScheduling[gateSize];
+        input rxInfo[gateSize];
+        input rxPriority[gateSize];
 }

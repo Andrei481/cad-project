@@ -31,9 +31,7 @@ void Scheduler::initialize() {
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
     for (int i =0; i < NrUsers; i++)
-        userWeights[i] = i + 1;
-    for (int i =0; i < NrUsers; i++)
-            lastTime[i] = 1;
+            lastTime[i] = 0;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -50,51 +48,54 @@ void Scheduler::initialize() {
 //    }
 //}
 void Scheduler::handleMessage(cMessage *msg) {
+    for(int i = 0; i<3; i++) {
+        if (msg->arrivedOn("rxInfo", i)){
+            EV << "ELEMENTS ON INDEX " << i << " " << msg->par("length") << endl;
+            elements[i]= msg->par("length");
+            delete(msg);
+        }
+        else if (msg->arrivedOn("rxPriority", i)) {
+            lastTime[i] = msg->par("last_time").doubleValue();
+
+            double currPriority = lastTime[i];
+
+            // Emit signal for data collection
+            delete(msg);
+        }
+    }
+    
     if (msg == selfMsg) {
         int highestPriorityQueue = findNextWeightedNonEmptyQueue();
 
-        if (highestPriorityQueue != -1) {
-            cMessage *cmd = new cMessage("cmd");
-            lastTime[highestPriorityQueue] = simTime().raw();
-            send(cmd, "txScheduling", highestPriorityQueue);
-        }
-
+        cMessage *cmd = new cMessage("cmd");
+        send(cmd, "txScheduling", highestPriorityQueue);
+        
         scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
     }
 }
 
 int Scheduler::findNextWeightedNonEmptyQueue() {
-    int64_t maximum = 0;
-    int maxiIndex = 0;
+    double currSimTime = simTime().dbl();
+    double maximum = 3 * (currSimTime - lastTime[2]);
+    int maxiIndex = 2;
 
-    for (int i = 0; i < NrUsers; i++) {
-        int_64t auctionValue = userWeight[i];//lastTime[i] * userWeight[i];
-        if (auctionValue > maximum)
+    for(int i = 2; i>=0 ;i--){
+        double currPriority = (i+1) * (double)(currSimTime - lastTime[i]);
+        //EV << "BA PULA" << endl; 
+        if(elements[i] > 0 && currPriority > maximum){
             maxiIndex = i;
-    }
-    cMessage *msg = new cMessage("dummy");
-       send(msg, "txScheduling", maxiIndex);
+            EV << "Curr max: " << maximum << " updated to " << currPriority << endl;
+            maximum = currPriority;
+        }
 
-       if (msg->arrivedOn("txPackets")) {
-           delete msg;
-           return maxiIndex;
-       }
-    return -1;
+        // if (i == 2) {
+        //     EV << "Priority for HP is " << currPriority << endl;
+        // }
+        // else if (i == 1)
+        //     EV << "Priority for MP is " << currPriority << endl;
+        // else if (i == 0)
+        //     EV << "Priority for LP is " << currPriority << endl;
+    }
+
+    return maxiIndex;
 }
-//int Scheduler::findHighestPriorityNonEmptyQueue() {
-//    for (int i = 0; i < NrUsers; i++) {
-//        int queueIndex = (lastServedPriority + i + 1) % NrUsers;
-//        cMessage *msg = new cMessage("dummy");
-//        send(msg, "txScheduling", queueIndex);
-//
-//        if (msg->arrivedOn("txPackets")) {
-//            delete msg;
-//            lastServedPriority = queueIndex;
-//            return queueIndex;
-//        }
-//
-//        // delete msg;
-//    }
-//
-//    return -1;
-//}

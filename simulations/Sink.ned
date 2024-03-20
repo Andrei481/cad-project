@@ -29,9 +29,9 @@ simple Sink
         @signal[lifetimeHq](type="double");
         @signal[lifetimeMq](type="double");
         @signal[lifetimeLq](type="double");
-        @statistic[statsHq](title="last time served"; source="lifetimeHq"; record=vector,stats; interpolationmode=none);
-        @statistic[statsMq](title="last time served"; source="lifetimeMq"; record=vector,stats; interpolationmode=none);
-        @statistic[statsLq](title="last time served"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
+        @statistic[statsHq](title="Lifetime of HP messages"; source="lifetimeHq"; record=vector,stats; interpolationmode=none);
+        @statistic[statsMq](title="Lifetime of MP messages"; source="lifetimeMq"; record=vector,stats; interpolationmode=none);
+        @statistic[statsLq](title="Lifetime of LP messages"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
     gates:
         input rxPackets[gateSize];
 
