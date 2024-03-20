@@ -32,6 +32,7 @@ simple Sink
         @statistic[statsHq](title="Lifetime of HP messages"; source="lifetimeHq"; record=vector,stats; interpolationmode=none);
         @statistic[statsMq](title="Lifetime of MP messages"; source="lifetimeMq"; record=vector,stats; interpolationmode=none);
         @statistic[statsLq](title="Lifetime of LP messages"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
+ gates:
         input rxPackets[gateSize];
 
 }

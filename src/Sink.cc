@@ -20,7 +20,7 @@ Define_Module(Sink);
 void Sink::initialize()
 {
    // lifetimeSignal = registerSignal("lifetime");
-    lifetimeHq = registerSignal("lifetimeHq");
+        lifetimeHq = registerSignal("lifetimeHq");
         lifetimeMq = registerSignal("lifetimeMq");
         lifetimeLq = registerSignal("lifetimeLq");
     }
