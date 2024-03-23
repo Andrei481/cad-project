@@ -25,7 +25,7 @@ void MyQ::initialize()
 void MyQ::handleMessage(cMessage *msg)
 {
     //int i;
-    int ql;
+    int queue_len;
     //ql = queue.getLength();
     if (msg->arrivedOn("rxPackets")){
         queue.insert(msg);
@@ -37,16 +37,16 @@ void MyQ::handleMessage(cMessage *msg)
           send(msg, "txPackets");
         }
 
-        cMessage *lastTime = new cMessage("lastTime");
-        lastTime->addPar("last_time");
-        lastTime->par("last_time").setDoubleValue(simTime().dbl());
-        send(lastTime, "txPriority");
+        cMessage *queuePrio = new cMessage("queuePrio");
+        queuePrio->addPar("queue_prio");
+        queuePrio->par("queue_prio").setDoubleValue(simTime().dbl());
+        send(queuePrio, "txPriority");
     }
 
-    ql = queue.getLength();
+    queue_len = queue.getLength();
 
     cMessage *qInfo = new cMessage("qInfo");
     qInfo->addPar("length");
-    qInfo->par("length").setLongValue(ql);
+    qInfo->par("length").setLongValue(queue_len);
     sendDelayed(qInfo, 0.1, "txInfo");
 }

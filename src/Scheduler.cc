@@ -19,7 +19,7 @@ Define_Module(Scheduler);
 
 Scheduler::Scheduler() {
     selfMsg = nullptr;
-    lastServedPriority = -1;
+    //lastServedPriority = -1;
 }
 
 Scheduler::~Scheduler() {
@@ -31,7 +31,7 @@ void Scheduler::initialize() {
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
     for (int i =0; i < NrUsers; i++)
-            lastTime[i] = 0;
+        prio[i] = 0;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -48,18 +48,17 @@ void Scheduler::initialize() {
 //    }
 //}
 void Scheduler::handleMessage(cMessage *msg) {
-    for(int i = 0; i<3; i++) {
+    for(int i = 0; i<NrUsers; i++) {
         if (msg->arrivedOn("rxInfo", i)){
-            EV << "ELEMENTS ON INDEX " << i << " " << msg->par("length") << endl;
-            elements[i]= msg->par("length");
+            EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
+            queue[i]= msg->par("length");
             delete(msg);
         }
         else if (msg->arrivedOn("rxPriority", i)) {
-            lastTime[i] = msg->par("last_time").doubleValue();
+            prio[i] = msg->par("queue_prio").doubleValue();
 
-            double currPriority = lastTime[i];
+            double currPriority = prio[i];
 
-            // Emit signal for data collection
             delete(msg);
         }
     }
@@ -76,26 +75,31 @@ void Scheduler::handleMessage(cMessage *msg) {
 
 int Scheduler::findNextWeightedNonEmptyQueue() {
     double currSimTime = simTime().dbl();
-    double maximum = 3 * (currSimTime - lastTime[2]);
+    double maximum = 3 * (currSimTime - prio[2]);
     int maxiIndex = 2;
 
-    for(int i = 2; i>=0 ;i--){
-        double currPriority = (i+1) * (double)(currSimTime - lastTime[i]);
-        //EV << "BA PULA" << endl; 
-        if(elements[i] > 0 && currPriority > maximum){
+    for(int i = NrUsers - 1; i>=0 ;i--){
+        double currPriority = (i+1) * (double)(currSimTime - prio[i]);
+        if(queue[i] > 0 && currPriority > maximum){
             maxiIndex = i;
-            EV << "Curr max: " << maximum << " updated to " << currPriority << endl;
+            EV << "Old max: " << maximum << " New max: " << currPriority << endl;
             maximum = currPriority;
         }
 
-        // if (i == 2) {
-        //     EV << "Priority for HP is " << currPriority << endl;
-        // }
-        // else if (i == 1)
-        //     EV << "Priority for MP is " << currPriority << endl;
-        // else if (i == 0)
-        //     EV << "Priority for LP is " << currPriority << endl;
+        if (i == 2) {
+            EV << "HP prio = " << currPriority << endl;
+        }
+        else if (i == 1)
+            EV << "MP prio = " << currPriority << endl;
+        else if (i == 0)
+            EV << "LP prio = " << currPriority << endl;
     }
+    if(maxiIndex == 2)
+        EV << "Sending message to HP Queue with prio = " << maximum << endl;
+    else if(maxiIndex == 1)
+        EV << "Sending message to MP Queue with prio = " << maximum << endl;
+    else
+        EV << "Sending message to LP Queue with prio = " << maximum << endl;
 
     return maxiIndex;
 }

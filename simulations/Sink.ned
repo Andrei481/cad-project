@@ -23,7 +23,7 @@ simple Sink
 {
  parameters:
         int gateSize=default(3);
-       // @display("i=block/sink");
+        @display("i=block/sink");
       //  @signal[lifetime](type="simtime_t");
       //  @statistic[lifetime](title="lifetime of arrived jobs"; unit=s; record=vector,mean,max; interpolationmode=none);
         @signal[lifetimeHq](type="double");

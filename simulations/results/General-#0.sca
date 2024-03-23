@@ -1,8 +1,8 @@
 version 3
-run General-0-20231125-13:56:19-18108
+run General-0-20240322-17:15:57-7316
 attr configname General
-attr datetime 20231125-13:56:19
-attr datetimef 20231125-135619
+attr datetime 20240322-17:15:57
+attr datetimef 20240322-171557
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,20 +10,59 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Network
-attr processid 18108
+attr processid 7316
 attr repetition 0
 attr replication #0
 attr resultdir results
 attr runnumber 0
 attr seedset 0
 config network Network
+config sim-time-limit 100h
+config cpu-time-limit 200s
+config record-eventlog true
 
 par Network.scheduler typename "\"ipscheduler.simulations.Scheduler\""
-par Network.scheduler schedulingPeriod 1ms
+par Network.scheduler schedulingPeriod 0.1ms
 attr unit ms
 par Network.scheduler gateSize 3
 par Network.sink typename "\"ipscheduler.simulations.Sink\""
 par Network.sink gateSize 3
+statistic Network.sink statsLq:stats
+field count 4411
+field mean 0.37612229612691
+field stddev 0.41451187498759
+field min 0.10000504042
+field max 3.2
+field sum 1659.0754482158
+field sqrsum 1381.741883801
+attr interpolationmode none
+attr recordingmode stats
+attr source lifetimeLq
+attr title "Lifetime of LP messages"
+statistic Network.sink statsMq:stats
+field count 4324
+field mean 0.27789175853418
+field stddev 0.37632988457684
+field min 0.100020160806
+field max 4.825436717086
+field sum 1201.6039639018
+field sqrsum 946.15717748706
+attr interpolationmode none
+attr recordingmode stats
+attr source lifetimeMq
+attr title "Lifetime of MP messages"
+statistic Network.sink statsHq:stats
+field count 4312
+field mean 0.05799450920777
+field stddev 0.040263200834512
+field min 3.8450858e-05
+field max 0.3
+field sum 250.0723237039
+field sqrsum 21.491493026603
+attr interpolationmode none
+attr recordingmode stats
+attr source lifetimeHq
+attr title "Lifetime of HP messages"
 par Network.sources[0] typename "\"ipscheduler.simulations.Source\""
 par Network.sources[0] sendIaTime 10ms
 attr unit ms
@@ -42,14 +81,23 @@ attr unit ms
 par Network.sources[5] typename "\"ipscheduler.simulations.Source\""
 par Network.sources[5] sendIaTime 10ms
 attr unit ms
+par Network.sources[6] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[6] sendIaTime 10ms
+attr unit ms
+par Network.sources[7] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[7] sendIaTime 10ms
+attr unit ms
+par Network.sources[8] typename "\"ipscheduler.simulations.Source\""
+par Network.sources[8] sendIaTime 10ms
+attr unit ms
 par Network.hpq typename "\"ipscheduler.simulations.MyQ\""
-par Network.hpq NrInputs 1
+par Network.hpq NrInputs 3
 par Network.mpq typename "\"ipscheduler.simulations.MyQ\""
-par Network.mpq NrInputs 2
+par Network.mpq NrInputs 3
 par Network.lpq typename "\"ipscheduler.simulations.MyQ\""
 par Network.lpq NrInputs 3
 par Network typename "\"ipscheduler.simulations.Network\""
-par Network nrHP 1
-par Network nrMP 2
+par Network nrHP 3
+par Network nrMP 3
 par Network nrLP 3
 

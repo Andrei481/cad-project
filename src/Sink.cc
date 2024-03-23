@@ -21,9 +21,9 @@ void Sink::initialize()
 {
    // lifetimeSignal = registerSignal("lifetime");
     lifetimeHq = registerSignal("lifetimeHq");
-        lifetimeMq = registerSignal("lifetimeMq");
-        lifetimeLq = registerSignal("lifetimeLq");
-    }
+    lifetimeMq = registerSignal("lifetimeMq");
+    lifetimeLq = registerSignal("lifetimeLq");
+}
 
     void Sink::handleMessage(cMessage *msg)
     {
