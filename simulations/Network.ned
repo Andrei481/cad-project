@@ -46,6 +46,10 @@ network Network
             NrInputs = parent.nrLP;
             @display("p=281,264");
         }
+        flc: FLC {
+            parameters:
+                @display("p=744,243");
+        }
 //        user[2]: User {
 //
 //            @display("p=317,292");
@@ -73,6 +77,9 @@ network Network
         hpq.txPriority --> scheduler.rxPriority[2];
         mpq.txPriority --> scheduler.rxPriority[1];
         lpq.txPriority --> scheduler.rxPriority[0];
-
+        // FLC
+        flc.out --> scheduler.inputFlc;
+        scheduler.flcWeight --> flc.flcWeight;
+        sink.flcDelay --> flc.in;
 }
 

@@ -34,5 +34,6 @@ simple Sink
         @statistic[statsLq](title="Lifetime of LP messages"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
     gates:
         input rxPackets[gateSize];
+        output flcDelay;
 
 }

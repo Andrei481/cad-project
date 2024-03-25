@@ -27,9 +27,12 @@ simple Scheduler
         //double schedulingPeriod @unit(ms) = default(0.1ms);
         double schedulingPeriod @unit(ms) = default(0.5ms);
         int gateSize=default(3);
+        int prioHigh;
 
     gates:
         output txScheduling[gateSize];
         input rxInfo[gateSize];
         input rxPriority[gateSize];
+        input inputFlc;
+        output flcWeight;
 }

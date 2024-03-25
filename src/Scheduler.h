@@ -41,6 +41,7 @@ private:
     int queue[3];
     int prio[3];
     int findNextWeightedNonEmptyQueue();
+    int flc_hp;
 };
 
 #endif

@@ -30,6 +30,7 @@ void Scheduler::initialize() {
     NrUsers = par("gateSize").intValue();
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
+    flc_hp = 10;
     for (int i =0; i < NrUsers; i++)
         prio[i] = 0;
 }
@@ -64,12 +65,54 @@ void Scheduler::handleMessage(cMessage *msg) {
     }
     
     if (msg == selfMsg) {
-        int highestPriorityQueue = findNextWeightedNonEmptyQueue();
-
+        double currSimTime = simTime().dbl();
+        double maximum = 3 * (currSimTime - prio[2]);
+        int maxiIndex = 2;
         cMessage *cmd = new cMessage("cmd");
-        send(cmd, "txScheduling", highestPriorityQueue);
-        
-        scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
+
+        int maxWeight = 0;
+        int maxIndex = 2;
+
+        int weightHp = queue[2] * flc_hp;
+        int weightMp = queue[1] * 5;
+        int weightLp = queue[0] * 1;
+
+        if (weightHp >= weightMp) {
+            // Serve HP
+            cMessage *flcWeight = new cMessage("flcWeight");
+            flcWeight->addPar("delayFor");
+            flcWeight->par("delayFor").setStringValue("hp");
+            flcWeight->addPar("flcWeight");
+            flcWeight->par("flcWeight").setLongValue(weightHp);
+            send(flcWeight, "flcWeight");
+
+            EV << "Sending to HP with no. elements of " << queue[2] << endl;
+            send(cmd, "txScheduling", 2);
+            scheduleAt(simTime()+par("schedulingPeriod").doubleValue(), selfMsg);
+        }
+        else if (weightMp >= weightLp) {
+                // Serve MP
+                cMessage *flcWeight = new cMessage("flcWeight");
+                flcWeight->addPar("delayFor");
+                flcWeight->par("delayFor").setStringValue("mp");
+                flcWeight->addPar("flcWeight");
+                flcWeight->par("flcWeight").setLongValue(weightMp);
+                send(flcWeight, "flcWeight");
+
+                EV << "Sending to MP with no. elements of " << queue[1] << endl;
+                send(cmd, "txScheduling", 1);
+                scheduleAt(simTime()+par("schedulingPeriod").doubleValue(), selfMsg);
+        }
+        else {
+            // Serve LP
+            EV << "Sending to LP with no. elements of " << queue[0] << endl;
+            send(cmd, "txScheduling", 0);
+            scheduleAt(simTime()+par("schedulingPeriod").doubleValue(), selfMsg);
+        }
+    }
+    else if (msg->arrivedOn("inputFlc")) {
+        flc_hp = msg->par("newHP").longValue();
+        EV << "NEW HP =  " << flc_hp << endl;
     }
 }
 
