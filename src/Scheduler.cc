@@ -31,7 +31,7 @@ void Scheduler::initialize() {
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
     for (int i =0; i < NrUsers; i++)
-        prio[i] = 0;
+        lastTime[i] = 0;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -55,9 +55,9 @@ void Scheduler::handleMessage(cMessage *msg) {
             delete(msg);
         }
         else if (msg->arrivedOn("rxPriority", i)) {
-            prio[i] = msg->par("queue_prio").doubleValue();
+            lastTime[i] = msg->par("queue_prio").doubleValue();
 
-            double currPriority = prio[i];
+            double currPriority = lastTime[i];
 
             delete(msg);
         }
@@ -75,12 +75,12 @@ void Scheduler::handleMessage(cMessage *msg) {
 
 int Scheduler::findNextWeightedNonEmptyQueue() {
     double currSimTime = simTime().dbl();
-    double maximum = 3 * (currSimTime - prio[2]);
-    int maxiIndex = 2;
+    double maximum = 0;
+    int maxiIndex = 0;
 
-    for(int i = NrUsers - 1; i>=0 ;i--){
-        double currPriority = (i+1) * (double)(currSimTime - prio[i]);
-        if(queue[i] > 0 && currPriority > maximum){
+    for(int i = 2; i>=0 ;i--){
+        double currPriority = (i+1) * (double)(currSimTime - lastTime[i]);
+        if(elements[i] > 0 && currPriority > maximum){
             maxiIndex = i;
             EV << "Old max: " << maximum << " New max: " << currPriority << endl;
             maximum = currPriority;
