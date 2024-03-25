@@ -51,7 +51,7 @@ void Scheduler::handleMessage(cMessage *msg) {
     for(int i = 0; i<NrUsers; i++) {
         if (msg->arrivedOn("rxInfo", i)){
             EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
-            queue[i]= msg->par("length");
+            elements[i]= msg->par("length");
             delete(msg);
         }
         else if (msg->arrivedOn("rxPriority", i)) {
