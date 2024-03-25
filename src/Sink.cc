@@ -59,7 +59,7 @@ void Sink::initialize()
             }
 
 
-            emit(lifetimeHq, lifetime);
+            emit(lifetimeHq, lifetime.dbl());
         }
         else if (msg->arrivedOn("rxPackets", 1)){
             mp_delay[mp_cnt] = simTime().dbl();
@@ -87,10 +87,10 @@ void Sink::initialize()
                 send(averageDelayMessage, "flcDelay");
             }
 
-            emit(lifetimeMq, lifetime);
+            emit(lifetimeMq, lifetime.dbl());
         }
         else {
-            emit(lifetimeLq, lifetime);
+            emit(lifetimeLq, lifetime.dbl());
         }
 
         delete msg;
