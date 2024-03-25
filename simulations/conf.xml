@@ -8,10 +8,10 @@
 		   <value>4</value>
 	</m_bits>
 	<n_inp>
-		   <value>2</value>
+		   <value>1</value>
 	</n_inp>
 	<n_rules>
-		<value>21</value>
+		<value>7</value>
 	</n_rules>
 	<delta>
 		<value>0</value>
@@ -155,123 +155,36 @@
 	<!--number of premises = number of input variables-->
 	<rule>
 		<p1>NL</p1>
-		<p2>H</p2>
-		<c>PL</c>
-	</rule>
-
-	<rule>
-		<p1>NM</p1>
-		<p2>H</p2>
 		<c>PL</c>
 	</rule>
 
 	<rule>
 		<p1>NS</p1>
-		<p2>H</p2>
 		<c>PS</c>
 	</rule>
 	<rule>
 		<p1>ZR</p1>
-		<p2>H</p2>
 		<c>ZR</c>
 	</rule>
 	<rule>
 		<p1>PS</p1>
-		<p2>H</p2>
 		<c>NS</c>
-	</rule>
-
-	<rule>
-		<p1>PM</p1>
-		<p2>H</p2>
-		<c>NS</c>
-	</rule>
-
-	<rule>
-		<p1>PL</p1>
-		<p2>H</p2>
-		<c>NM</c>
-	</rule>
-	<rule>
-		<p1>NL</p1>
-		<p2>M</p2>
-		<c>PL</c>
 	</rule>
 
 	<rule>
 		<p1>NM</p1>
-		<p2>M</p2>
 		<c>PM</c>
 	</rule>
 
 	<rule>
 		<p1>NS</p1>
-		<p2>M</p2>
 		<c>PS</c>
-	</rule>
-	<rule>
-		<p1>ZR</p1>
-		<p2>M</p2>
-		<c>ZR</c>
-	</rule>
-	<rule>
-		<p1>PS</p1>
-		<p2>M</p2>
-		<c>NS</c>
-	</rule>
-
-	<rule>
-		<p1>PM</p1>
-		<p2>M</p2>
-		<c>NM</c>
-	</rule>
-
-	<rule>
-		<p1>PL</p1>
-		<p2>M</p2>
-		<c>NL</c>
 	</rule>
 	
 	<rule>
-		<p1>NL</p1>
-		<p2>L</p2>
-		<c>PM</c>
-	</rule>
-
-	<rule>
-		<p1>NM</p1>
-		<p2>L</p2>
-		<c>PS</c>
-	</rule>
-
-	<rule>
-		<p1>NS</p1>
-		<p2>L</p2>
-		<c>ZR</c>
-	</rule>
-	<rule>
 		<p1>ZR</p1>
-		<p2>L</p2>
 		<c>ZR</c>
-	</rule>
-	<rule>
-		<p1>PS</p1>
-		<p2>L</p2>
-		<c>NM</c>
-	</rule>
-
-	<rule>
-		<p1>PM</p1>
-		<p2>L</p2>
-		<c>NL</c>
-	</rule>
-
-	<rule>
-		<p1>PL</p1>
-		<p2>L</p2>
-		<c>NL</c>
 	</rule>
 	
-
 
 </FLC>
