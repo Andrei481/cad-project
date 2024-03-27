@@ -23,6 +23,7 @@ void Sink::initialize()
     lifetimeHq = registerSignal("lifetimeHq");
     lifetimeMq = registerSignal("lifetimeMq");
     lifetimeLq = registerSignal("lifetimeLq");
+    hp_cnt = 0;
 }
 
     void Sink::handleMessage(cMessage *msg)
@@ -32,6 +33,28 @@ void Sink::initialize()
           EV << "Received " << msg->getName() << ", lifetime: " << lifetime << "s" << endl;
 
           if (msg->arrivedOn("rxPackets", 2)){
+              hp_delay[hp_cnt] = simTime().dbl();
+                hp_cnt++;
+                EV << "hp_cnt: " << hp_cnt << endl;
+
+                if (hp_cnt == 5) {
+                    double hp_avg_delay = 0;
+                    for (int i = 0; i < hp_cnt-1; i++) {
+                        EV << "hp_cnt[" << i << "]: " << hp_delay[i] << endl;
+                        hp_avg_delay += hp_delay[i+1] - hp_delay[i];
+                    }
+
+                    hp_avg_delay /= hp_cnt;
+
+                    EV << "hp_avg_delay: " << hp_avg_delay << endl;
+
+                    hp_cnt = 0;
+
+                    cMessage *averageDelayMessage = new cMessage("hp_avg_delay");
+                    averageDelayMessage->addPar("hp_avg_delay");
+                    averageDelayMessage->par("hp_avg_delay").setDoubleValue(hp_avg_delay);
+                    send(averageDelayMessage, "flcDelay");
+                }
               emit(lifetimeHq, lifetime);
           }
           else if (msg->arrivedOn("rxPackets", 1)){

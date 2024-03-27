@@ -37,9 +37,10 @@ protected:
 private:
     cMessage *selfMsg;
     int NrUsers;
-    //int lastServedPriority;
+    //int lastServedlastTime;
     int elements[3];
     int lastTime[3];
+    int weights[3];
     int findNextWeightedNonEmptyQueue();
 };
 

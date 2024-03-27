@@ -19,7 +19,7 @@ Define_Module(Scheduler);
 
 Scheduler::Scheduler() {
     selfMsg = nullptr;
-    //lastServedPriority = -1;
+
 }
 
 Scheduler::~Scheduler() {
@@ -32,6 +32,9 @@ void Scheduler::initialize() {
     scheduleAt(simTime(), selfMsg);
     for (int i =0; i < NrUsers; i++)
         lastTime[i] = 0;
+    for (int i  = 0; i < NrUsers; i++)
+        weights[i] = i + 3;
+    
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -48,26 +51,30 @@ void Scheduler::initialize() {
 //    }
 //}
 void Scheduler::handleMessage(cMessage *msg) {
+    if(msg->arrivedOn("inputFlc")){
+        weights[2] = msg->par("new_weight").longValue();
+    }
+    
     for(int i = 0; i<NrUsers; i++) {
         if (msg->arrivedOn("rxInfo", i)){
             EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
             elements[i]= msg->par("length");
             delete(msg);
         }
-        else if (msg->arrivedOn("rxPriority", i)) {
+        else if (msg->arrivedOn("rxlastTime", i)) {
             lastTime[i] = msg->par("queue_prio").doubleValue();
 
-            double currPriority = lastTime[i];
+            double currlastTime = lastTime[i];
 
             delete(msg);
         }
     }
     
     if (msg == selfMsg) {
-        int highestPriorityQueue = findNextWeightedNonEmptyQueue();
+        int highestlastTimeQueue = findNextWeightedNonEmptyQueue();
 
         cMessage *cmd = new cMessage("cmd");
-        send(cmd, "txScheduling", highestPriorityQueue);
+        send(cmd, "txScheduling", highestlastTimeQueue);
         
         scheduleAt(simTime() + par("schedulingPeriod").doubleValue(), selfMsg);
     }
@@ -79,20 +86,20 @@ int Scheduler::findNextWeightedNonEmptyQueue() {
     int maxiIndex = 0;
 
     for(int i = 2; i>=0 ;i--){
-        double currPriority = (i+1) * (double)(currSimTime - lastTime[i]);
-        if(elements[i] > 0 && currPriority > maximum){
+        double currlastTime = weights[i] * (double)(currSimTime - lastTime[i]);
+        if(elements[i] > 0 && currlastTime > maximum){
             maxiIndex = i;
-            EV << "Old max: " << maximum << " New max: " << currPriority << endl;
-            maximum = currPriority;
+            EV << "Old max: " << maximum << " New max: " << currlastTime << endl;
+            maximum = currlastTime;
         }
 
         if (i == 2) {
-            EV << "HP prio = " << currPriority << endl;
+            EV << "HP prio = " << currlastTime << endl;
         }
         else if (i == 1)
-            EV << "MP prio = " << currPriority << endl;
+            EV << "MP prio = " << currlastTime << endl;
         else if (i == 0)
-            EV << "LP prio = " << currPriority << endl;
+            EV << "LP prio = " << currlastTime << endl;
     }
     if(maxiIndex == 2)
         EV << "Sending message to HP Queue with prio = " << maximum << endl;

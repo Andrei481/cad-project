@@ -26,13 +26,14 @@ simple Sink
         @display("i=block/sink");
       //  @signal[lifetime](type="simtime_t");
       //  @statistic[lifetime](title="lifetime of arrived jobs"; unit=s; record=vector,mean,max; interpolationmode=none);
-        @signal[lifetimeHq](type="double");
-        @signal[lifetimeMq](type="double");
-        @signal[lifetimeLq](type="double");
+        @signal[lifetimeHq](type="simtime_t");
+        @signal[lifetimeMq](type="simtime_t");
+        @signal[lifetimeLq](type="simtime_t");
         @statistic[statsHq](title="Lifetime of HP messages"; source="lifetimeHq"; record=vector,stats; interpolationmode=none);
         @statistic[statsMq](title="Lifetime of MP messages"; source="lifetimeMq"; record=vector,stats; interpolationmode=none);
         @statistic[statsLq](title="Lifetime of LP messages"; source="lifetimeLq"; record=vector,stats; interpolationmode=none);
     gates:
         input rxPackets[gateSize];
+        output flcDelay;
 
 }

@@ -542,7 +542,10 @@ int FLC::fuzzy_inference(int* inp, int nb_inp, int delta)
 			
 			
 		}
+		EV << "am ajuns aici";
 		m_functions[n_inp][rules[i][n_inp]]->getTermRep(bits_m, bits_n, term);
+
+		EV << "am ajuns si aici";
 		term->min_vector(&minMax, &minMat);
 		minMat.max_matrix(&maxMat, &maxMat);
 
@@ -561,26 +564,24 @@ int FLC::fuzzy_inference(int* inp, int nb_inp, int delta)
 
 void FLC::handleMessage(cMessage *msg)
 {
-	if (!strcmp(msg->getName(),"start_flc"))
-	{
 
 	    ev << "Calculez nou HP" << endl;
-	    int wantedDelay = 10;//(int)getParentModule()->par("delayLimit");
-	    int currentDelay = 15;//round((double)getParentModule()->getSubmodule("netwrk")->par("meanDelayHP"));
-	    int W_HP = 4;//(int)getParentModule()->getSubmodule("hp_fifo")->par("weight");
-	    int B = 31;//(int)getParentModule()->getSubmodule("netwrk")->par("B");
+	    int wantedDelay = 10;
+	    int currentDelay = msg->par("hp_avg_delay").doubleValue();
+	    int W_HP = 4;
+	    int B = 31;
 
 	    int new_W_HP = W_HP;
 		int diff = wantedDelay - currentDelay;
 
-		qtime.record (currentDelay);
+		//qtime.record (currentDelay);
 		ev<<" Dif nescalat = "<<diff<<"\n";
 
 		diff = scale(0, 62, -10, 10, diff);
 		W_HP = scale(0, 62, 0, B, W_HP);
 		ev<<" Dif scalat = "<<diff<<"\n";
 			
-		int delta = 0;//(int) getParentModule()->par("delta");
+		int delta = 0;
 		int inp[2]={diff,W_HP};
 		
 		int result = fuzzy_inference(inp,2, delta);
@@ -596,15 +597,14 @@ void FLC::handleMessage(cMessage *msg)
 		if (new_W_HP>B) new_W_HP = B-1;
 		if (new_W_HP<1) new_W_HP = 1;
 
-/* not for test
-		cPar& W_HP_r = getParentModule()->getSubmodule("hp_fifo")->par("weight");
-		W_HP_r.setIntValue(new_W_HP);
-*/
 		ev<<"Pondere noua: "<<new_W_HP<<"\n\n";
 		
-		qtimew.record(new_W_HP);
-		//cMessage *job = new cMessage("clear");
-		//sendDirect(job, getParentModule()->getSubmodule("netwrk")->gate("in"));
+		//qtimew.record(new_W_HP);
+
 		delete msg;
-	}
+
+		cMessage *newWeight = new cMessage("new_weight");
+        newWeight->addPar("new_weight");
+        newWeight->par("new_weight").setLongValue(new_W_HP);
+        send(newWeight, "out");
 }

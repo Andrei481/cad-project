@@ -32,4 +32,6 @@ simple Scheduler
         output txScheduling[gateSize];
         input rxInfo[gateSize];
         input rxPriority[gateSize];
+        input inputFlc;
+        output flcWeight;
 }

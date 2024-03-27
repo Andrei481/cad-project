@@ -71,30 +71,6 @@
 
 	</fuzzy_set>
 	
-	<fuzzy_set type="input" index="2"  nterms="3">
-		<term>
-			<name>L</name>
-			<xa>0</xa>
-			<xb>0</xb>
-			<xc>20</xc>
-			<xd>20</xd>
-		</term>
-		<term>
-			<name>M</name>
-			<xa>21</xa>
-			<xb>21</xb>
-			<xc>40</xc>
-			<xd>40</xd>
-		</term>
-		<term>
-			<name>H</name>
-			<xa>41</xa>
-			<xb>41</xb>
-			<xc>63</xc>
-			<xd>63</xd>
-		</term>
-	</fuzzy_set>
-	
 	
 	<!--Fuzzy set for the output-->
 	<fuzzy_set type="output" nterms="7">
@@ -162,10 +138,12 @@
 		<p1>NS</p1>
 		<c>PS</c>
 	</rule>
+
 	<rule>
 		<p1>ZR</p1>
 		<c>ZR</c>
 	</rule>
+	
 	<rule>
 		<p1>PS</p1>
 		<c>NS</c>
@@ -186,5 +164,4 @@
 		<c>ZR</c>
 	</rule>
 	
-
 </FLC>
