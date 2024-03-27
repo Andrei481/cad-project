@@ -30,10 +30,14 @@ private:
     simsignal_t lifetimeHq;
     simsignal_t lifetimeMq;
     simsignal_t lifetimeLq;
+    cHistogram lowHistogram;
+    cHistogram mediumHistogram;
+    cHistogram highHistogram;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-
+    virtual void finish();
 };
 
 #endif
