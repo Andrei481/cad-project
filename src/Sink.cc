@@ -56,13 +56,28 @@ void Sink::initialize()
                     send(averageDelayMessage, "flcDelay");
                 }
               emit(lifetimeHq, lifetime);
+              highHistogram.collect(lifetime);
           }
           else if (msg->arrivedOn("rxPackets", 1)){
               emit(lifetimeMq, lifetime);
+              mediumHistogram.collect(lifetime);
           }
           else {
               emit(lifetimeLq, lifetime);
+              lowHistogram.collect(lifetime);
           }
 
           delete msg;
+    }
+
+    void Sink::finish()
+    {
+        // Print or use the average as needed
+            EV << "Average of highVector: " << highHistogram.getMean() << endl;
+
+        // Print or use the average as needed
+            EV << "Average of mediumVector: " << mediumHistogram.getMean() << endl;
+
+        // Print or use the average as needed
+            EV << "Average of lowVector: " << lowHistogram.getMean() << endl;
     }
