@@ -33,15 +33,15 @@ void Sink::initialize()
           EV << "Received " << msg->getName() << ", lifetime: " << lifetime << "s" << endl;
 
           if (msg->arrivedOn("rxPackets", 2)){
-              hp_delay[hp_cnt] = simTime().dbl();
+              hp_delay[hp_cnt] = lifetime.dbl();
                 hp_cnt++;
                 EV << "hp_cnt: " << hp_cnt << endl;
 
-                if (hp_cnt == 5) {
+                if (hp_cnt == 10) {
                     double hp_avg_delay = 0;
-                    for (int i = 0; i < hp_cnt-1; i++) {
+                    for (int i = 0; i < hp_cnt; i++) {
                         EV << "hp_cnt[" << i << "]: " << hp_delay[i] << endl;
-                        hp_avg_delay += hp_delay[i+1] - hp_delay[i];
+                        hp_avg_delay += hp_delay[i];
                     }
 
                     hp_avg_delay /= hp_cnt;

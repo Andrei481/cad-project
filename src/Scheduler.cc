@@ -30,11 +30,13 @@ void Scheduler::initialize() {
     NrUsers = par("gateSize").intValue();
     selfMsg = new cMessage("selfMsg");
     scheduleAt(simTime(), selfMsg);
-    for (int i =0; i < NrUsers; i++)
+    for (int i =0; i < NrUsers; i++){
         lastTime[i] = 0;
-    for (int i  = 0; i < NrUsers; i++)
-        weights[i] = i + 3;
-    
+        elements[i] = 0;
+    }
+    weights[0] = 1;
+    weights[1] = 5;
+    weights[2] = 9;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -56,8 +58,15 @@ void Scheduler::handleMessage(cMessage *msg) {
     }
     
     for(int i = 0; i<NrUsers; i++) {
+        if (i == 2){
+            int val = weights[2];
+            cMessage *weight = new cMessage("weight");
+            weight->addPar("weight");
+            weight->par("weight").setLongValue(val);
+            send(weight, "flcWeight");
+        }
         if (msg->arrivedOn("rxInfo", i)){
-            EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
+            //EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
             elements[i]= msg->par("length");
             delete(msg);
         }
@@ -93,13 +102,13 @@ int Scheduler::findNextWeightedNonEmptyQueue() {
             maximum = currlastTime;
         }
 
-        if (i == 2) {
-            EV << "HP prio = " << currlastTime << endl;
-        }
-        else if (i == 1)
-            EV << "MP prio = " << currlastTime << endl;
-        else if (i == 0)
-            EV << "LP prio = " << currlastTime << endl;
+        // if (i == 2) {
+        //     EV << "HP weight = " << weights[2] << endl;
+        // }
+        // else if (i == 1)
+        //     EV << "MP prio = " << weights[1] << endl;
+        // else if (i == 0)
+        //     EV << "LP prio = " << weights[0] << endl;
     }
     if(maxiIndex == 2)
         EV << "Sending message to HP Queue with prio = " << maximum << endl;

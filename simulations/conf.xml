@@ -70,8 +70,7 @@
 		</term>		
 
 	</fuzzy_set>
-	
-	
+
 	<!--Fuzzy set for the output-->
 	<fuzzy_set type="output" nterms="7">
 		<term>

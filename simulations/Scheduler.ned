@@ -25,7 +25,7 @@ simple Scheduler
         @display("i=block/dispatch");
         //volatile 
         //double schedulingPeriod @unit(ms) = default(0.1ms);
-        double schedulingPeriod @unit(ms) = default(0.1ms);
+        double schedulingPeriod @unit(ms) = default(1ms);
         int gateSize=default(3);
 
     gates:

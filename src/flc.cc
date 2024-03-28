@@ -542,10 +542,8 @@ int FLC::fuzzy_inference(int* inp, int nb_inp, int delta)
 			
 			
 		}
-		EV << "am ajuns aici";
 		m_functions[n_inp][rules[i][n_inp]]->getTermRep(bits_m, bits_n, term);
 
-		EV << "am ajuns si aici";
 		term->min_vector(&minMax, &minMat);
 		minMat.max_matrix(&maxMat, &maxMat);
 
@@ -564,42 +562,49 @@ int FLC::fuzzy_inference(int* inp, int nb_inp, int delta)
 
 void FLC::handleMessage(cMessage *msg)
 {
-
-	    ev << "Calculez nou HP" << endl;
-	    int wantedDelay = 10;
-	    int currentDelay = msg->par("hp_avg_delay").doubleValue();
-	    int W_HP = 4;
-	    int B = 31;
-
+    int W_HP = 0;
+    int result;
+    if (! msg->arrivedOn("flcWeight")){
+	    EV << "Calculez nou HP" << endl;
+	    double wantedDelay = 10;
+	    double currentDelay = msg->par("hp_avg_delay").doubleValue();
+	    int B = 40;
+		EV << "current delay = " << currentDelay << endl;
 	    int new_W_HP = W_HP;
 		int diff = wantedDelay - currentDelay;
 
 		//qtime.record (currentDelay);
-		ev<<" Dif nescalat = "<<diff<<"\n";
+		EV <<" Dif nescalat = "<<diff<<"\n";
 
 		diff = scale(0, 62, -10, 10, diff);
-		W_HP = scale(0, 62, 0, B, W_HP);
-		ev<<" Dif scalat = "<<diff<<"\n";
+		EV <<" Dif scalat = "<<diff<<"\n";
 			
-		int delta = 0;
+		int delta = 3;
 		int inp[2]={diff,W_HP};
 		
-		int result = fuzzy_inference(inp,2, delta);
+		if (diff > 0){
+		    result = -5;
+		}
+		else
+		{
+		    result = 5;
+		}
+		//int result = fuzzy_inference(inp, 1, delta);
 		result_dep.record (result);
 
-		int res = round(scale((B * -1)/2, B/2, 0, 62, result));
-		ev<<" Result = "<<result<<"\nRes= "<<res<<"\n";
+		//int res = round(scale((B * -1)/2, B/2, 0, 62, result));
+		//EV <<" Result = "<<result<<"\nRes= "<<res<<"\n";
 
-		res_dep.record (res);
+		//res_dep.record (res);
 
-		new_W_HP = new_W_HP + res;
+		new_W_HP = new_W_HP + result;
 
-		if (new_W_HP>B) new_W_HP = B-1;
-		if (new_W_HP<1) new_W_HP = 1;
+//		if (new_W_HP>B) new_W_HP = B-1;
+//		if (new_W_HP<1) new_W_HP = 1;
 
-		ev<<"Pondere noua: "<<new_W_HP<<"\n\n";
+		EV <<"Pondere noua: "<<new_W_HP<<"\n\n";
 		
-		//qtimew.record(new_W_HP);
+		qtimew.record(new_W_HP);
 
 		delete msg;
 
@@ -607,4 +612,9 @@ void FLC::handleMessage(cMessage *msg)
         newWeight->addPar("new_weight");
         newWeight->par("new_weight").setLongValue(new_W_HP);
         send(newWeight, "out");
+    }
+    else {
+        W_HP = msg->par("weight").longValue();
+		delete(msg);
+    }
 }
