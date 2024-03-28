@@ -34,9 +34,9 @@ void Scheduler::initialize() {
         lastTime[i] = 0;
         elements[i] = 0;
     }
-    weights[0] = 1;
-    weights[1] = 5;
-    weights[2] = 9;
+    weights[0] = 2;
+    weights[1] = 4;
+    weights[2] = 8;
 }
 
 //void Scheduler::handleMessage(cMessage *msg)
@@ -58,13 +58,13 @@ void Scheduler::handleMessage(cMessage *msg) {
     }
     
     for(int i = 0; i<NrUsers; i++) {
-        if (i == 2){
-            int val = weights[2];
-            cMessage *weight = new cMessage("weight");
-            weight->addPar("weight");
-            weight->par("weight").setLongValue(val);
-            send(weight, "flcWeight");
-        }
+//        if (i == 2){
+//            int val = weights[2];
+//            cMessage *weight = new cMessage("weight");
+//            weight->addPar("weight");
+//            weight->par("weight").setLongValue(val);
+//            send(weight, "flcWeight");
+//        }
         if (msg->arrivedOn("rxInfo", i)){
             //EV << "ELEMENTS ON QUEUE " << i << " " << msg->par("length") << endl;
             elements[i]= msg->par("length");
@@ -91,7 +91,7 @@ void Scheduler::handleMessage(cMessage *msg) {
 
 int Scheduler::findNextWeightedNonEmptyQueue() {
     double currSimTime = simTime().dbl();
-    double maximum = 0;
+    double maximum = -1;
     int maxiIndex = 0;
 
     for(int i = 2; i>=0 ;i--){
@@ -110,12 +110,13 @@ int Scheduler::findNextWeightedNonEmptyQueue() {
         // else if (i == 0)
         //     EV << "LP prio = " << weights[0] << endl;
     }
-    if(maxiIndex == 2)
-        EV << "Sending message to HP Queue with prio = " << maximum << endl;
-    else if(maxiIndex == 1)
-        EV << "Sending message to MP Queue with prio = " << maximum << endl;
-    else
-        EV << "Sending message to LP Queue with prio = " << maximum << endl;
-
+    if (maximum){
+        if(maxiIndex == 2)
+            EV << "Sending message to HP Queue with prio = " << maximum << endl;
+        else if(maxiIndex == 1)
+            EV << "Sending message to MP Queue with prio = " << maximum << endl;
+        else
+            EV << "Sending message to LP Queue with prio = " << maximum << endl;
+    }
     return maxiIndex;
 }

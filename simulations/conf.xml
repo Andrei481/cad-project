@@ -134,6 +134,11 @@
 	</rule>
 
 	<rule>
+		<p1>NM</p1>
+		<c>PM</c>
+	</rule>
+		
+	<rule>
 		<p1>NS</p1>
 		<c>PS</c>
 	</rule>
@@ -147,20 +152,14 @@
 		<p1>PS</p1>
 		<c>NS</c>
 	</rule>
-
+	
 	<rule>
-		<p1>NM</p1>
-		<c>PM</c>
-	</rule>
-
-	<rule>
-		<p1>NS</p1>
-		<c>PS</c>
+		<p1>PM</p1>
+		<c>NM</c>
 	</rule>
 	
 	<rule>
-		<p1>ZR</p1>
-		<c>ZR</c>
+		<p1>PL</p1>
+		<c>NL</c>
 	</rule>
-	
 </FLC>

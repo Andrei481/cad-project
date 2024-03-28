@@ -286,6 +286,8 @@ class FLC : public cSimpleModule
 	Matrix* fuzzify(int crisp_in, int delta);
 	int defuzify(Matrix* mat);
 	double scale(double n, double m, double a, double b, double x);
+	int W_HP;
+	int result;
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage* msg);
@@ -562,59 +564,46 @@ int FLC::fuzzy_inference(int* inp, int nb_inp, int delta)
 
 void FLC::handleMessage(cMessage *msg)
 {
-    int W_HP = 0;
-    int result;
-    if (! msg->arrivedOn("flcWeight")){
-	    EV << "Calculez nou HP" << endl;
-	    double wantedDelay = 10;
-	    double currentDelay = msg->par("hp_avg_delay").doubleValue();
-	    int B = 40;
-		EV << "current delay = " << currentDelay << endl;
-	    int new_W_HP = W_HP;
-		int diff = wantedDelay - currentDelay;
+    ev << "Calculez nou HP" << endl;
+    int wantedDelay = 400;//(int)getParentModule()->par("delayLimit");
+    int currentDelay = (int)((msg->par("hp_avg_delay").doubleValue())*1000);
+    W_HP = 8;//(int)getParentModule()->getSubmodule("hp_fifo")->par("weight");
+    int max_weight = 45;//(int)getParentModule()->getSubmodule("netwrk")->par("B");
 
-		//qtime.record (currentDelay);
-		EV <<" Dif nescalat = "<<diff<<"\n";
+    int new_W_HP = W_HP;
+    int diff = wantedDelay - currentDelay;
 
-		diff = scale(0, 62, -10, 10, diff);
-		EV <<" Dif scalat = "<<diff<<"\n";
-			
-		int delta = 3;
-		int inp[2]={diff,W_HP};
-		
-		if (diff > 0){
-		    result = -5;
-		}
-		else
-		{
-		    result = 5;
-		}
-		//int result = fuzzy_inference(inp, 1, delta);
-		result_dep.record (result);
+    qtime.record (currentDelay/1000.0);
+    ev<<" Dif nescalat = "<<diff<<"\n";
 
-		//int res = round(scale((B * -1)/2, B/2, 0, 62, result));
-		//EV <<" Result = "<<result<<"\nRes= "<<res<<"\n";
+    diff = scale(0, 62, -500, 500, diff);
+    W_HP = scale(0, 62, 0, max_weight, W_HP);
+    ev<<" Dif scalat = "<<diff<<"\n";
 
-		//res_dep.record (res);
+    int delta = 0;//(int) getParentModule()->par("delta");
+    int inp[2]={diff,W_HP};
 
-		new_W_HP = new_W_HP + result;
+    int result = fuzzy_inference(inp,2, delta);
+    result_dep.record (result);
 
-//		if (new_W_HP>B) new_W_HP = B-1;
-//		if (new_W_HP<1) new_W_HP = 1;
+    int res = round(scale((max_weight * -1), max_weight, 0, 62, result));
+    ev<<" Result = "<<result<<"\nRes= "<<res<<"\n";
 
-		EV <<"Pondere noua: "<<new_W_HP<<"\n\n";
-		
-		qtimew.record(new_W_HP);
+    res_dep.record (res);
 
-		delete msg;
+    new_W_HP = new_W_HP + res;
 
-		cMessage *newWeight = new cMessage("new_weight");
-        newWeight->addPar("new_weight");
-        newWeight->par("new_weight").setLongValue(new_W_HP);
-        send(newWeight, "out");
-    }
-    else {
-        W_HP = msg->par("weight").longValue();
-		delete(msg);
-    }
+
+/* not for test
+    cPar& W_HP_r = getParentModule()->getSubmodule("hp_fifo")->par("weight");
+    W_HP_r.setIntValue(new_W_HP);
+*/
+    ev<<"Pondere noua: "<<new_W_HP<<"\n\n";
+
+    qtimew.record(new_W_HP);
+    cMessage *newWeight = new cMessage("new_weight");
+    newWeight->addPar("new_weight");
+    newWeight->par("new_weight").setLongValue(new_W_HP);
+    send(newWeight, "out");
+
 }
